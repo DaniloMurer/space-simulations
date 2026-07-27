@@ -21,8 +21,8 @@
 
 int main(void)
 {
-    SimVector3 a = {1.0f, 2.0f, 3.0f};
-    SimVector3 b = {4.0f, 5.0f, 6.0f};
+    SimVector3 a = {1.0, 2.0, 3.0};
+    SimVector3 b = {4.0, 5.0, 6.0};
 
     SimVector3 sum = vector3_add(a, b);
 

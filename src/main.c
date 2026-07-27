@@ -21,10 +21,10 @@
 
 int main(void)
 {
-    SimVector3 a = {1.0, 2.0, 3.0};
-    SimVector3 b = {4.0, 5.0, 6.0};
+    const SimVector3 a = {.x = 1.0, .y = 2.0, .z = 3.0};
+    const SimVector3 b = {.x = 4.0, .y = 5.0, .z = 6.0};
 
-    SimVector3 sum = vector3_add(a, b);
+    const SimVector3 sum = vector3_add(a, b);
 
     printf("Sum: (%f, %f, %f)\n", sum.x, sum.y, sum.z);
 

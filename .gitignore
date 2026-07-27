@@ -1,1 +1,4 @@
+.idea/*
+!.idea/runConfigurations/
 build
+cmake-build-debug

@@ -10,7 +10,7 @@ typedef struct Body {
 } Body;
 
 typedef struct Universe {
-    Body *bodies[2];
+    Body bodies[2];
 } Universe;
 
 

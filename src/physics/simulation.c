@@ -3,8 +3,7 @@
 #include "physics/vector3.h"
 #include <stdio.h>
 
-void simulate_earth_moon_system(Universe *universe)
-{
+void simulate_earth_moon_system(Universe *universe) {
     printf("Moon position: (%f, %f, %f)\n", universe->bodies[1].position.x, universe->bodies[1].position.y, universe->bodies[1].position.z);
 
     const double delta_time = 0.016;
@@ -28,8 +27,5 @@ void simulate_earth_moon_system(Universe *universe)
         universe->bodies[1].position = vector3_add(universe->bodies[1].position, vector3_scale(universe->bodies[1].velocity, delta_time));
 
         printf("Moon position: (%f, %f, %f)\n", universe->bodies[1].position.x, universe->bodies[1].position.y, universe->bodies[1].position.z);
-
     }
-
-
 }

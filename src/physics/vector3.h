@@ -1,8 +1,7 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
-typedef struct SimVector3
-{
+typedef struct SimVector3 {
     double x;
     double y;
     double z;

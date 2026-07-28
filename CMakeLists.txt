@@ -4,8 +4,10 @@ project(space_sim C)
 set(CMAKE_C_STANDARD 99)
 
 add_executable(space_sim
-    src/main.c
-    src/physics/vector3.c
+        src/main.c
+        src/physics/vector3.c
+        src/physics/newtonian_gravity.c
+        src/physics/simulation.c
 )
 
 target_include_directories(space_sim PRIVATE 

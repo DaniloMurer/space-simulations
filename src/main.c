@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <physics/vector3.h>
 #include <stdio.h>
+#include <physics/simulation.h>
 
 /*int main(void)
 {
@@ -21,12 +22,7 @@
 
 int main(void)
 {
-    const SimVector3 a = {.x = 1.0, .y = 2.0, .z = 3.0};
-    const SimVector3 b = {.x = 4.0, .y = 5.0, .z = 6.0};
-
-    const SimVector3 sum = vector3_add(a, b);
-
-    printf("Sum: (%f, %f, %f)\n", sum.x, sum.y, sum.z);
+    simulate_earth_moon_system();
 
     return 0;
 }

@@ -7,7 +7,4 @@ void render(Universe *universe) {
 
     // render moon
     DrawCircle((int) universe->bodies[1].position.x, (int) universe->bodies[1].position.y, 10.0f, WHITE);
-
-    // render whatever
-    //DrawCircle((int) universe->bodies[2].position.x, (int) universe->bodies[2].position.y, 10.0f, RED);
 }

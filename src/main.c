@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <raylib.h>
+#include <stdio.h>
 #include <physics/vector3.h>
 #include <physics/simulation.h>
 #include <engine/engine.h>
@@ -7,7 +8,7 @@
 int main(void)
 {
     InitWindow(900, 700, "Space Simulation");
-    SetTargetFPS(120);
+    SetTargetFPS(60);
     Universe *universe = malloc(sizeof(Universe));
     // earth
     universe->bodies[0] = (Body) {
@@ -17,11 +18,6 @@ int main(void)
     universe->bodies[1] = (Body) {
         .mass = 2, .position = (SimVector3){.x = 800, .y = 0, .z = 0}, .velocity = (SimVector3){.x = 0, .y = 20, .z = 0}
     };
-
-    /*// whatever this is
-    universe->bodies[2] = (Body) {
-        .mass = 1000, .position = (SimVector3){.x = 200, .y = 100, .z = 0}, .velocity = (SimVector3){.x = 0, .y = 0, .z = 0}
-    };*/
 
     double accumulator = 0.0;
     // we update approximately every 16ms or every 60 frames

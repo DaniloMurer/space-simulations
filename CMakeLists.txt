@@ -8,6 +8,7 @@ add_executable(space_sim
         src/physics/vector3.c
         src/physics/newtonian_gravity.c
         src/physics/simulation.c
+        src/engine/engine.c
 )
 
 target_include_directories(space_sim PRIVATE 

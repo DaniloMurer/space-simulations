@@ -10,10 +10,10 @@ typedef struct Body {
 } Body;
 
 typedef struct Universe {
-    Body bodies[2];
+    Body bodies[3];
 } Universe;
 
 
-void simulate_earth_moon_system(Universe *universe);
+void simulate_earth_moon_system(Universe *universe, float delta_time);
 
 #endif

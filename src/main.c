@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdlib.h>
 #include <raylib.h>
 #include <stdio.h>
@@ -16,7 +17,7 @@ int main(void)
     };
     // moon
     universe->bodies[1] = (Body) {
-        .mass = 2, .position = (SimVector3){.x = 800, .y = 0, .z = 0}, .velocity = (SimVector3){.x = 0, .y = 20, .z = 0}
+        .mass = 2, .position = (SimVector3){.x = 800, .y = 0, .z = 0}, .velocity = (SimVector3){.x = 0, .y = 40, .z = 0}
     };
 
     double accumulator = 0.0;
@@ -24,8 +25,22 @@ int main(void)
     const float physics_dt = 0.016f;
     const float accelerate_time = 1.0f;
 
+    Camera2D camera = {0};
+    camera.target = (Vector2) {
+        .x = 500,
+        .y = 400
+    };
+    camera.offset = (Vector2) {
+        .x = 450,
+        .y = 350
+    };
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
+
     while (!WindowShouldClose())
     {
+
+        camera.zoom = expf(logf(camera.zoom) + GetMouseWheelMove() * 0.1f);
         accumulator += GetFrameTime();
         while (accumulator >= physics_dt)
         {
@@ -35,8 +50,10 @@ int main(void)
         BeginDrawing();
         ClearBackground(BLACK);
         DrawFPS(20, 20);
+        BeginMode2D(camera);
         // Your code here
         render(universe);
+        EndMode2D();
         EndDrawing();
     }
 

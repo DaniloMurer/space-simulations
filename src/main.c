@@ -1,23 +1,56 @@
 #include <math.h>
 #include <stdlib.h>
 #include <raylib.h>
+#include <time.h>
 #include <physics/simulation.h>
 #include <engine/engine.h>
 
+double random_double() {
+    int min = 3000;
+    int max = 10000;
+    return min + ((double)rand() / (double)RAND_MAX) * (max - min);
+}
+
+double random_velocity() {
+    int min = 50;
+    int max = 300;
+    return min + ((double)rand() / (double)RAND_MAX) * (max - min);
+}
+
+
+
+int random_mass() {
+    int min = 30;
+    int max = 60000;
+    return min + (rand() / (double)RAND_MAX) * (max - min);
+}
+
+float random_float() {
+    int min = 10.0f;
+    int max = 60.0f;
+    return min + ((float)rand() / (double)RAND_MAX) * (max - min);
+}
+
 int main(void)
 {
+    const int bodies = 500;
+    srand((unsigned int)time(NULL));
+    Color color[20] = {RED, GREEN, BLUE, YELLOW, PURPLE, WHITE, GREEN, DARKBLUE, WHITE, GREEN, BLUE, YELLOW, PURPLE, WHITE, GREEN, DARKBLUE, WHITE, GREEN, BLUE, YELLOW};
     InitWindow(900, 700, "Space Simulation");
-    SetTargetFPS(244);
+    SetTargetFPS(60);
     Universe *universe = malloc(sizeof(Universe));
     // planet
-    universe->bodies[0] = create_body(1000, 0, 220, 0, 4500, 0, 0, BLUE, 50.0f);
+    for (int i = 0; i < bodies; i++) {
+        universe->bodies[i] = create_body(random_mass(), random_velocity(), random_velocity(), 0.0, random_double(), random_double(), random_double(), color[i % 20], random_float());
+    }
+    /*universe->bodies[0] = create_body(1000, 0, 220, 0, 4500, 0, 0, BLUE, 50.0f);
     // moons
     universe->bodies[1] = create_body(10, 0, 320, 0, 4900, 0, 0, WHITE, 40.0f);
     universe->bodies[2] = create_body(15, 0, 290, 0, 5300, 0, 0, GREEN, 45.0f);
     // star
-    universe->bodies[3] = create_body(50000, 0, 0, 0, 500, 400, 0, RED, 80.0f);
+    universe->bodies[3] = create_body(50000, 0, 0, 0, 500, 400, 0, RED, 80.0f);*/
 
-    universe->bodies_size = 4;
+    universe->bodies_size = bodies;
 
     double accumulator = 0.0;
     // we update approximately every 16ms or every 60 frames

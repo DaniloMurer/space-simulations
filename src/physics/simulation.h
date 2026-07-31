@@ -4,8 +4,8 @@
 #include <raylib.h>
 #include <physics/vector3.h>
 
-#define MAX_BODIES 64
-#define MAX_POSITIONS 4096
+#define MAX_BODIES 500
+#define MAX_POSITIONS 1024
 typedef struct Body {
     SimVector3 position;
     SimVector3 velocity;

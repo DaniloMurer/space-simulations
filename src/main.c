@@ -9,13 +9,15 @@ int main(void)
     InitWindow(900, 700, "Space Simulation");
     SetTargetFPS(60);
     Universe *universe = malloc(sizeof(Universe));
-    // earth
-    universe->bodies[0] = create_body(1000, 0, 0, 0, 500, 400, 0, BLUE, 20.0f);
-    // moon
-    universe->bodies[1] = create_body(10, 0, 60, 0, 2500, 0, 0, WHITE, 10.0f);
-    universe->bodies[2] = create_body(15, 0, -60, 0, -1000, 0, 0, RED, 15.0f);
+    // planet
+    universe->bodies[0] = create_body(1000, 0, 220, 0, 4500, 0, 0, BLUE, 50.0f);
+    // moons
+    universe->bodies[1] = create_body(10, 0, 320, 0, 4900, 0, 0, WHITE, 40.0f);
+    universe->bodies[2] = create_body(15, 0, 290, 0, 5300, 0, 0, GREEN, 45.0f);
+    // star
+    universe->bodies[3] = create_body(50000, 0, 0, 0, 500, 400, 0, RED, 80.0f);
 
-    universe->bodies_size = 3;
+    universe->bodies_size = 4;
 
     double accumulator = 0.0;
     // we update approximately every 16ms or every 60 frames

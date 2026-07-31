@@ -3,12 +3,9 @@
 #include "physics/vector3.h"
 
 void simulate_gravity(Universe *universe, float delta_time) {
-    for (int k = 0; k < universe->bodies_size; k++) {
-        reset_acceleration(&universe->bodies[k]);
-    }
     for (int i = 0; i < universe->bodies_size; i++) {
-
         Body *affected_body = &universe->bodies[i];
+        reset_acceleration(affected_body);
         for (int j = 0; j < universe->bodies_size; j++) {
             if (i == j) {
                 continue;

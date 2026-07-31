@@ -7,7 +7,7 @@
 int main(void)
 {
     InitWindow(900, 700, "Space Simulation");
-    SetTargetFPS(60);
+    SetTargetFPS(244);
     Universe *universe = malloc(sizeof(Universe));
     // planet
     universe->bodies[0] = create_body(1000, 0, 220, 0, 4500, 0, 0, BLUE, 50.0f);

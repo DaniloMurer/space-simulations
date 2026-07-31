@@ -5,12 +5,17 @@
 #include <physics/vector3.h>
 
 #define MAX_BODIES 64
+#define MAX_POSITIONS 4096
 typedef struct Body {
     SimVector3 position;
     SimVector3 velocity;
     SimVector3 acceleration;
     SimVector3 temp_position;
+    SimVector3 previous_position;
     SimVector3 temp_velocity;
+    SimVector3 positions[MAX_POSITIONS];
+    int positions_index;
+    int positions_count;
     double mass;
     // rendering props
     Color color;

@@ -1,4 +1,5 @@
 #include "physics/simulation.h"
+
 #include "physics/newtonian_gravity.h"
 #include "physics/vector3.h"
 
@@ -61,6 +62,9 @@ Body create_body(
     body.acceleration = (SimVector3) {.x = 0, .y = 0, .z = 0};
     body.temp_velocity = (SimVector3) {.x = 0, .y = 0, .z = 0};
     body.temp_position = (SimVector3) {.x = 0, .y = 0, .z = 0};
+    body.previous_position = (SimVector3) {.x = 0, .y = 0, .z = 0};
+    body.positions_index = 0;
+    body.positions_count = 0;
     return body;
 }
 
@@ -69,6 +73,13 @@ void reset_acceleration(Body *body) {
 }
 
 void integrate_position(Body *body) {
+    body->previous_position = body->position;
+    body->positions[body->positions_index] = body->position;
+    body->positions_index = (body->positions_index + 1) % MAX_POSITIONS;
+
+    if (body->positions_count < MAX_POSITIONS) {
+        body->positions_count++;
+    }
     body->position = body->temp_position;
     body->temp_position = (SimVector3) { .x = 0, .y = 0, .z = 0};
 }

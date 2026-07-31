@@ -1,28 +1,82 @@
 #include "physics/simulation.h"
 #include "physics/newtonian_gravity.h"
 #include "physics/vector3.h"
-#include <stdio.h>
 
-void simulate_earth_moon_system(Universe *universe, float delta_time) {
-    //printf("Moon position: (%f, %f, %f)\n", universe->bodies[1].position.x, universe->bodies[1].position.y, universe->bodies[1].position.z);
+void simulate_gravity(Universe *universe, float delta_time) {
+    for (int k = 0; k < universe->bodies_size; k++) {
+        reset_acceleration(&universe->bodies[k]);
+    }
+    for (int i = 0; i < universe->bodies_size; i++) {
 
-    const SimVector3 direction = vector3_subtract(universe->bodies[0].position, universe->bodies[1].position);
+        Body *affected_body = &universe->bodies[i];
+        for (int j = 0; j < universe->bodies_size; j++) {
+            if (i == j) {
+                continue;
+            }
+            const Body *affecting_body = &universe->bodies[j];
+
+            const SimVector3 force = compute_force(affected_body, affecting_body);
+            affected_body->acceleration = vector3_add(affected_body->acceleration, vector3_scale(force, 1.0 / affected_body->mass));
+        }
+        affected_body->temp_velocity = vector3_add(affected_body->velocity, vector3_scale(affected_body->acceleration, delta_time));
+        affected_body->temp_position = vector3_add(affected_body->position, vector3_scale(affected_body->temp_velocity, delta_time));
+    }
+
+    for (int l = 0; l < universe->bodies_size; l++) {
+        Body *body = &universe->bodies[l];
+        integrate_position(body);
+        integrate_velocity(body);
+    }
+}
+
+
+SimVector3 compute_force(const Body *affected_body, const Body *affecting_body) {
+    const SimVector3 direction = vector3_subtract(affecting_body->position, affected_body->position);
 
     const double distance = vector3_magnitude(direction);
 
     const SimVector3 normalized_direction = vector3_normalize(direction, distance);
 
-    const double force_scalar = newtonian_gravity_force(universe->bodies[0].mass, universe->bodies[1].mass, distance);
+    const double force_scalar = newtonian_gravity_force(affecting_body->mass, affected_body->mass, distance);
 
     const SimVector3 force = vector3_scale(normalized_direction, force_scalar);
 
-    printf("Force: (%f, %f, %f)\n", force.x, force.y, force.z);
+    return force;
+}
 
-    const SimVector3 moon_acceleration = vector3_scale(force, 1.0 / universe->bodies[1].mass);
+Body create_body(
+    const int mass,
+    const double vx,
+    const double vy,
+    const double vz,
+    const double px,
+    const double py,
+    const double pz,
+    const Color color,
+    const float radius
+    ) {
+    Body body;
+    body.mass = mass;
+    body.velocity = (SimVector3) {.x = vx, .y = vy, .z = vz};
+    body.position = (SimVector3) {.x = px, .y = py, .z = pz};
+    body.color = color;
+    body.radius = radius;
+    body.acceleration = (SimVector3) {.x = 0, .y = 0, .z = 0};
+    body.temp_velocity = (SimVector3) {.x = 0, .y = 0, .z = 0};
+    body.temp_position = (SimVector3) {.x = 0, .y = 0, .z = 0};
+    return body;
+}
 
-    universe->bodies[1].velocity = vector3_add(universe->bodies[1].velocity, vector3_scale(moon_acceleration, delta_time));
+void reset_acceleration(Body *body) {
+    body->acceleration = (SimVector3) {.x = 0, .y = 0, .z = 0};
+}
 
-    universe->bodies[1].position = vector3_add(universe->bodies[1].position, vector3_scale(universe->bodies[1].velocity, delta_time));
+void integrate_position(Body *body) {
+    body->position = body->temp_position;
+    body->temp_position = (SimVector3) { .x = 0, .y = 0, .z = 0};
+}
 
-    //printf("Moon position: (%f, %f, %f)\n", universe->bodies[1].position.x, universe->bodies[1].position.y, universe->bodies[1].position.z);
+void integrate_velocity(Body *body) {
+    body->velocity = body->temp_velocity;
+    body->temp_velocity = (SimVector3) { .x = 0, .y = 0, .z = 0};
 }

@@ -16,6 +16,7 @@ Repeat many times.
 ```
 
 That repeated process creates:
+
 - falling
 - orbiting
 - slingshots
@@ -76,6 +77,7 @@ means:
 # Why vectors are used everywhere
 
 Physics quantities naturally have:
+
 - direction
 - strength
 
@@ -107,6 +109,7 @@ Moon position:
 ```
 
 Meaning:
+
 - 500 units right
 - 0 up
 - 0 depth
@@ -321,6 +324,7 @@ Not direction.
 So:
 
 ## Step 1
+
 Direction:
 
 ```text
@@ -328,6 +332,7 @@ Direction:
 ```
 
 ## Step 2
+
 Gravity strength:
 
 ```text
@@ -335,6 +340,7 @@ Gravity strength:
 ```
 
 ## Step 3
+
 Combine them:
 
 ```text
@@ -512,6 +518,7 @@ velocity += acceleration * dt
 It is simple and great for learning.
 
 But later you may notice:
+
 - spiraling orbits
 - instability
 - energy drift
@@ -519,6 +526,7 @@ But later you may notice:
 That is normal.
 
 Later you can learn:
+
 - semi-implicit Euler
 - Verlet integration
 
@@ -553,11 +561,13 @@ This makes debugging and learning much easier.
 ## Separate simulation from rendering
 
 Physics should only calculate:
+
 - positions
 - velocities
 - forces
 
 Rendering should only:
+
 - draw the current state
 
 This creates clean architecture.
@@ -567,11 +577,13 @@ This creates clean architecture.
 # Why Starting in 2D Helps
 
 3D adds:
+
 - camera complexity
 - debugging difficulty
 - orientation confusion
 
 2D already teaches:
+
 - gravity
 - vectors
 - integration
@@ -602,3 +614,411 @@ Repeated tiny corrections over time.
 That is why coding these systems often makes the math finally feel understandable.
 
 You are turning abstract equations into evolving state.
+
+---
+
+# Persistent Simulation State
+
+At some point the simulation needs to remember:
+
+- where a body is
+- how fast it moves
+- how heavy it is
+
+That information is called:
+
+```text
+Simulation state
+```
+
+This is why a body becomes a struct.
+
+Example:
+
+```text
+Body
+    position
+    velocity
+    mass
+```
+
+---
+
+# Why Velocity Must Persist
+
+Velocity is not temporary.
+
+It continuously evolves over time.
+
+Gravity changes velocity every frame.
+
+Velocity then changes position every frame.
+
+So the simulation repeatedly does:
+
+```text
+new velocity
+→ stored
+→ used next frame
+```
+
+Without persistent velocity:
+
+```text
+objects would not continue moving correctly.
+```
+
+---
+
+# The N-Body Problem
+
+Initially:
+
+```text
+Earth affects Moon
+```
+
+But real gravity works like:
+
+```text
+Every body affects every other body.
+```
+
+That is called:
+
+```text
+N-body simulation
+```
+
+Where:
+
+```text
+N = number of bodies
+```
+
+---
+
+# Why Acceleration Exists in the Body Struct
+
+A body now needs:
+
+```text
+acceleration
+```
+
+because many gravitational influences combine together.
+
+Example:
+
+```text
+Body
+    position
+    velocity
+    acceleration
+    mass
+```
+
+---
+
+# Why Simulation Happens in Phases
+
+One of the most important simulation concepts:
+
+```text
+All bodies should observe the same universe state.
+```
+
+This means:
+
+```text
+Compute all physics first.
+Move bodies afterward.
+```
+
+NOT:
+
+```text
+Compute one body
+Move it immediately
+Then compute another body
+```
+
+That creates inconsistent physics.
+
+---
+
+# Correct Simulation Architecture
+
+A stable simulation usually works like this:
+
+```text
+1. Reset accelerations
+2. Compute all gravitational influences
+3. Compute next velocities
+4. Compute next positions
+5. Commit new state
+```
+
+This separation is extremely important.
+
+---
+
+# Temporary State Buffers
+
+You implemented:
+
+```text
+temp_velocity
+temp_position
+```
+
+These represent:
+
+```text
+The next universe state.
+```
+
+Meaning:
+
+```text
+current state
+→ compute future state
+→ apply future state all at once
+```
+
+This prevents bodies from observing partially updated data.
+
+---
+
+# Semi-Implicit Euler Integration
+
+A small but important improvement:
+
+Instead of:
+
+```text
+position uses old velocity
+```
+
+use:
+
+```text
+position uses newly updated velocity
+```
+
+Meaning:
+
+```text
+velocity += acceleration * dt
+position += velocity * dt
+```
+
+using the NEW velocity.
+
+This improves orbital stability significantly.
+
+---
+
+# Why Orbits Become Unstable
+
+Computers cannot simulate perfect continuous physics.
+
+Tiny approximation errors happen every frame.
+
+Those errors accumulate over time.
+
+Result:
+
+- spiraling orbits
+- exploding systems
+- collapsing systems
+
+This is normal.
+
+Different integrators create different kinds of error.
+
+---
+
+# Deterministic Simulation
+
+Your simulation is now deterministic.
+
+Meaning:
+
+```text
+same initial state
++
+same dt
+=
+same future universe
+```
+
+This is extremely important in:
+
+- simulations
+- networking
+- replay systems
+- debugging
+
+---
+
+# Fixed Timestep Simulation
+
+Good simulations usually use:
+
+```text
+fixed physics timestep
+```
+
+Meaning:
+
+```text
+Physics always updates with same dt.
+```
+
+Even if rendering framerate changes.
+
+This improves:
+
+- stability
+- determinism
+- consistency
+
+---
+
+# Rendering vs Simulation
+
+Important separation:
+
+## Simulation
+
+Responsible for:
+
+- gravity
+- acceleration
+- velocity
+- position
+
+## Rendering
+
+Responsible only for:
+
+- drawing objects
+- showing current state
+
+Rendering should NOT decide physics.
+
+It should only visualize the simulation.
+
+---
+
+# Heap vs Stack Intuition
+
+## Stack
+
+Temporary local memory.
+
+Fast.
+Automatic cleanup.
+
+Example:
+
+```text
+local variables
+```
+
+---
+
+## Heap
+
+Manual long-lived memory.
+
+Allocated with:
+
+```text
+malloc
+```
+
+Freed with:
+
+```text
+free
+```
+
+Useful when:
+
+- size is dynamic
+- data must outlive current scope
+
+---
+
+# Embedded Structs vs Pointers
+
+Example:
+
+```text
+Universe
+    contains bodies directly
+```
+
+means:
+
+```text
+Bodies live wherever Universe lives.
+```
+
+If Universe is on heap:
+
+- bodies are also on heap.
+
+If Universe is on stack:
+
+- bodies are also on stack.
+
+This is a very important C memory-layout concept.
+
+---
+
+# Dynamic Arrays
+
+If body count changes dynamically:
+
+```text
+Universe
+    Body *bodies
+    count
+    capacity
+```
+
+This creates a manually managed dynamic array.
+
+Very similar internally to:
+
+- ArrayList
+- Vec
+- JS arrays
+
+---
+
+# The Most Important Simulation Insight
+
+A simulation is fundamentally:
+
+```text
+state evolving over time
+```
+
+Every frame:
+
+```text
+current state
+→ tiny physical changes
+→ next state
+```
+
+Repeated thousands of times:
+
+```text
+complex orbital behavior emerges naturally.
+```
+

@@ -3,6 +3,6 @@
 
 #include <physics/simulation.h>
 
-void render(Universe *universe);
+void render(const Universe *universe);
 
 #endif
